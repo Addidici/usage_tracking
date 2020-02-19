@@ -1,26 +1,21 @@
--- Author: Adrian Ward
--- Date: Feb 2020
--- Desc: Used to POPULATE the aggregate table Dashboard Day
-
-delete from wc_ut_dashboard_day_a where TRUNC(start_dt) >= TRUNC(SYSDATE)-1;
+delete from wc_ut_day_a where TRUNC(start_dt) >= TRUNC(SYSDATE)-1;
 commit;
 
-INSERT INTO wc_ut_dashboard_day_a (
+INSERT INTO wc_ut_day_a (
     start_dt_wid,
     start_dt,
     repository_name,
-    saw_dashboard,
-    saw_dashboard_pg,
-    dashboard_wid,
-    dashboard_page_wid,
+    CACHE_IND_FLG,
     num_users,
     num_queries,
     row_count,
+    NUM_DASHBOARDS,
     total_time_sec,
     compile_time_sec,
     num_db_query,
     cum_db_time_sec,
     cum_num_db_row,
+    NUM_CACHE_INSERTED,
     num_cache_hits,
     total_temp_kb,
     resp_time_sec
@@ -29,10 +24,7 @@ SELECT
     start_dt_wid,
     start_dt,
     repository_name,
-    saw_dashboard,
-    saw_dashboard_pg,
-    dashboard_wid,
-    dashboard_page_wid,
+    CACHE_IND_FLG,
     count(distinct user_name)   as num_users, 
     count(id)                   as num_queries,
     sum(row_count)              as row_count,
@@ -50,16 +42,13 @@ group by
     start_dt_wid,
     start_dt,
     repository_name,
-    saw_dashboard,
-    saw_dashboard_pg,
-    dashboard_wid,
-    dashboard_page_wid
+    CACHE_IND_FLG
 HAVING 
-    TRUNC(start_dt) > TRUNC(SYSDATE)-1
+    TRUNC(start_dt) >= TRUNC(SYSDATE)-1
 ;
 COMMIT;
 
-UPDATE  wc_ut_dashboard_day_a
+UPDATE  wc_ut_day_a
 SET     avg_time_sec = (total_time_sec/num_queries)
 WHERE   num_queries > 0
 AND     TRUNC(start_dt) > TRUNC(SYSDATE)-1;
