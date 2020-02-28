@@ -1,3 +1,7 @@
+-- Author: Adrian Ward
+-- Date: Feb 2020
+-- Desc: Used to POPULATE the aggregate table Day
+
 delete from wc_ut_day_a where TRUNC(start_dt) >= TRUNC(SYSDATE)-1;
 commit;
 
@@ -5,7 +9,6 @@ INSERT INTO wc_ut_day_a (
     start_dt_wid,
     start_dt,
     repository_name,
-    CACHE_IND_FLG,
     num_users,
     num_queries,
     row_count,
@@ -24,10 +27,10 @@ SELECT
     start_dt_wid,
     start_dt,
     repository_name,
-    CACHE_IND_FLG,
     count(distinct user_name)   as num_users, 
     count(id)                   as num_queries,
     sum(row_count)              as row_count,
+    count(distinct dashboard)   as num_dashboards, 
     sum(total_time_sec)         as total_time_sec,
     sum(compile_time_sec)       as compile_time_sec,
     sum(num_db_query)           as num_db_query,
@@ -41,8 +44,7 @@ FROM
 group by
     start_dt_wid,
     start_dt,
-    repository_name,
-    CACHE_IND_FLG
+    repository_name
 HAVING 
     TRUNC(start_dt) >= TRUNC(SYSDATE)-1
 ;
